@@ -28,6 +28,38 @@ The [Internet Movie Database (IMDb)]() contains information on millions of movie
 * Run the function on all of the `*_sample.csv.gz` files to created processed `.rda` files.
 * In your other files, you can load these using the `TABLE <- read_rds("data/FILENAME.rda")` function.
 
+```{r}
+preprocess <- function(name, data_dir = "data") {
+  file_path <- file.path(data_dir, paste0(name, ".csv.gz"))
+  
+  df <- read_csv(
+    file = file_path,
+    na = c("\\N"),
+    show_col_types = FALSE
+  )
+  
+  return(df)
+}
+```
+
+```{r}
+sample_files <- list.files(
+  path = "data", 
+  pattern = "_sample\\.csv\\.gz$",
+  full.names = FALSE
+) %>% 
+  sub("\\.csv\\.gz$", "", .)
+
+for (name in sample_files) {
+  message("Processing: ", name)
+  tbl <- preprocess(name)
+    write_rds(
+    tbl, 
+    file = file.path("data", paste0(name, ".rda"))
+  )
+}
+```
+
 ## Part II: EDA of individual tables
 
 * For each of the 4 tables, perform basic exploratory data analysis. Report the following information:
